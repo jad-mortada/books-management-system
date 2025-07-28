@@ -14,35 +14,31 @@ import java.util.List;
 @RequestMapping("/api/customers")
 public class CustomerController {
 
-    private final CustomerService customerService;
+	private final CustomerService customerService;
 
-    public CustomerController(CustomerService customerService) {
-        this.customerService = customerService;
-    }
+	public CustomerController(CustomerService customerService) {
+		this.customerService = customerService;
+	}
 
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
-        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
-    }
+	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<CustomerDTO> createCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
+		CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
+		return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+	}
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'USER') and @securityService.isCustomerOwnerOrAdmin(#id)")
-    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
-        CustomerDTO customer = customerService.getCustomerById(id);
-        return ResponseEntity.ok(customer);
-    }
+	@GetMapping("/{id}")
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER') and @securityService.isCustomerOwnerOrAdmin(#id)")
+	public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
+		CustomerDTO customer = customerService.getCustomerById(id);
+		return ResponseEntity.ok(customer);
+	}
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
-        List<CustomerDTO> customers = customerService.getAllCustomers();
-        return ResponseEntity.ok(customers);
-    }
+	@GetMapping
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<List<CustomerDTO>> getAllCustomers() {
+		List<CustomerDTO> customers = customerService.getAllCustomers();
+		return ResponseEntity.ok(customers);
+	}
 
- 
-
-
-  
 }

@@ -143,7 +143,7 @@ public class ListServiceImpl implements ListService {
 		ListBook listBook = new ListBook();
 		listBook.setListEntity(listEntity);
 		listBook.setBook(book);
-		listBook.setQuantity(listBookDTO.getQuantity());
+		// Removed quantity from list creation
 
 		ListBook savedListBook = listBookRepository.save(listBook);
 		return mapToListBookDTO(savedListBook);
@@ -175,7 +175,7 @@ public class ListServiceImpl implements ListService {
 			existingListBook.setBook(newBook);
 		}
 
-		existingListBook.setQuantity(listBookDTO.getQuantity());
+		// Removed quantity from list update
 
 		ListBook updatedListBook = listBookRepository.save(existingListBook);
 		return mapToListBookDTO(updatedListBook);
@@ -194,7 +194,18 @@ public class ListServiceImpl implements ListService {
 			throw new ResourceNotFoundException("Official List", "id", listId);
 		}
 		List<ListBook> listBooks = listBookRepository.findByListEntityId(listId);
+		if (listBooks.isEmpty()) {
+			throw new com.bookstore.booksmanagementsystem.exception.NoBooksFoundException(
+					"No books found in this list.");
+		}
 		return listBooks.stream().map(this::mapToListBookDTO).collect(Collectors.toList());
+	}
+
+	@Override
+	public ListBookDTO getBookById(Long listBookId) {
+		ListBook listBook = listBookRepository.findById(listBookId)
+				.orElseThrow(() -> new ResourceNotFoundException("List Book Item", "id", listBookId));
+		return mapToListBookDTO(listBook);
 	}
 
 	@Override

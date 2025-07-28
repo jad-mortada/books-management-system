@@ -7,154 +7,129 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Table(name = "customer_book_orders", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"customer_id", "official_list_id", "school_id", "class_id"})
-})
+@Table(name = "customer_book_orders")
 public class CustomerBookOrder {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "official_list_id")
-    private ListEntity officialList;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "official_list_id")
+	private ListEntity officialList;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "school_id")
-    private School school;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "school_id")
+	private School school;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "class_id")
-    private ClassEntity classEntity;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "class_id")
+	private ClassEntity classEntity;
 
-    @Column(name = "order_date")
-    private LocalDateTime orderDate;
+	@Column(name = "order_date")
+	private LocalDateTime orderDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private OrderStatus status;
+	@OneToMany(mappedBy = "customerBookOrder", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<CustomerBookOrderItem> orderItems = new HashSet<>();
 
-    @OneToMany(mappedBy = "customerBookOrder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CustomerBookOrderItem> orderItems = new HashSet<>();
+	public CustomerBookOrder() {
+	}
 
-    public enum OrderStatus {
-        PENDING, PREPARING, READY_FOR_PICKUP, COMPLETED, CANCELLED
-    }
+	public CustomerBookOrder(Customer customer, ListEntity officialList, School school, ClassEntity classEntity) {
+		this.customer = customer;
+		this.officialList = officialList;
+		this.school = school;
+		this.classEntity = classEntity;
+		this.orderDate = LocalDateTime.now();
+	}
 
-    public CustomerBookOrder() {
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public CustomerBookOrder(Customer customer, ListEntity officialList, School school, ClassEntity classEntity) {
-        this.customer = customer;
-        this.officialList = officialList;
-        this.school = school;
-        this.classEntity = classEntity;
-        this.orderDate = LocalDateTime.now();
-        this.status = OrderStatus.PENDING;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Customer getCustomer() {
+		return customer;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
 
-    public Customer getCustomer() {
-        return customer;
-    }
+	public ListEntity getOfficialList() {
+		return officialList;
+	}
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
+	public void setOfficialList(ListEntity officialList) {
+		this.officialList = officialList;
+	}
 
-    public ListEntity getOfficialList() {
-        return officialList;
-    }
+	public School getSchool() {
+		return school;
+	}
 
-    public void setOfficialList(ListEntity officialList) {
-        this.officialList = officialList;
-    }
+	public void setSchool(School school) {
+		this.school = school;
+	}
 
-    public School getSchool() {
-        return school;
-    }
+	public ClassEntity getClassEntity() {
+		return classEntity;
+	}
 
-    public void setSchool(School school) {
-        this.school = school;
-    }
+	public void setClassEntity(ClassEntity classEntity) {
+		this.classEntity = classEntity;
+	}
 
-    public ClassEntity getClassEntity() {
-        return classEntity;
-    }
+	public LocalDateTime getOrderDate() {
+		return orderDate;
+	}
 
-    public void setClassEntity(ClassEntity classEntity) {
-        this.classEntity = classEntity;
-    }
+	public void setOrderDate(LocalDateTime orderDate) {
+		this.orderDate = orderDate;
+	}
 
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
+	public Set<CustomerBookOrderItem> getOrderItems() {
+		return orderItems;
+	}
 
-    public void setOrderDate(LocalDateTime orderDate) {
-        this.orderDate = orderDate;
-    }
+	public void setOrderItems(Set<CustomerBookOrderItem> orderItems) {
+		this.orderItems = orderItems;
+	}
 
-    public OrderStatus getStatus() {
-        return status;
-    }
+	@PrePersist
+	protected void onCreate() {
+		if (orderDate == null) {
+			orderDate = LocalDateTime.now();
+		}
+	}
 
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-    public Set<CustomerBookOrderItem> getOrderItems() {
-        return orderItems;
-    }
+		CustomerBookOrder that = (CustomerBookOrder) o;
+		return Objects.equals(id, that.id);
+	}
 
-    public void setOrderItems(Set<CustomerBookOrderItem> orderItems) {
-        this.orderItems = orderItems;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
-    @PrePersist
-    protected void onCreate() {
-        if (orderDate == null) {
-            orderDate = LocalDateTime.now();
-        }
-        if (status == null) {
-            status = OrderStatus.PENDING;
-        }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CustomerBookOrder that = (CustomerBookOrder) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "CustomerBookOrder{" +
-               "id=" + id +
-               ", customerId=" + (customer != null ? customer.getId() : "null") +
-               ", officialListId=" + (officialList != null ? officialList.getId() : "null") +
-               ", schoolId=" + (school != null ? school.getId() : "null") +
-               ", classId=" + (classEntity != null ? classEntity.getId() : "null") +
-               ", orderDate=" + orderDate +
-               ", status=" + status +
-               '}';
-    }
+	@Override
+	public String toString() {
+		return "CustomerBookOrder{" + "id=" + id + ", customerId=" + (customer != null ? customer.getId() : "null")
+				+ ", officialListId=" + (officialList != null ? officialList.getId() : "null") + ", schoolId="
+				+ (school != null ? school.getId() : "null") + ", classId="
+				+ (classEntity != null ? classEntity.getId() : "null") + ", orderDate=" + orderDate + '}';
+	}
 }

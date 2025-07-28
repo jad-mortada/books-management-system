@@ -15,94 +15,96 @@ import java.util.stream.Collectors;
 @Service
 public class SchoolServiceImpl implements SchoolService {
 
-    private final SchoolRepository schoolRepository;
-    private final ModelMapper modelMapper;
+	private final SchoolRepository schoolRepository;
+	private final ModelMapper modelMapper;
 
-    public SchoolServiceImpl(SchoolRepository schoolRepository, ModelMapper modelMapper) {
-        this.schoolRepository = schoolRepository;
-        this.modelMapper = modelMapper;
-    }
+	public SchoolServiceImpl(SchoolRepository schoolRepository, ModelMapper modelMapper) {
+		this.schoolRepository = schoolRepository;
+		this.modelMapper = modelMapper;
+	}
 
-    @Override
-    public List<SchoolDTO> getAllSchools() {
-        List<School> schools = schoolRepository.findAll();
-        return schools.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<SchoolDTO> getAllSchools() {
+		List<School> schools = schoolRepository.findAll();
+		return schools.stream().map(this::convertToDto).collect(Collectors.toList());
+	}
 
-    @Override
-    public SchoolDTO getSchoolByName(String name) {
-        School school = schoolRepository.findByName(name)
-                .orElseThrow(() -> new ResourceNotFoundException("School", "name", name));
-        return convertToDto(school);
-    }
+	@Override
+	public SchoolDTO getSchoolByName(String name) {
+		School school = schoolRepository.findByName(name)
+				.orElseThrow(() -> new ResourceNotFoundException("School", "name", name));
+		return convertToDto(school);
+	}
 
-    @Override
-    public SchoolDTO getSchoolById(Long id) {
-        School school = schoolRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
-        return convertToDto(school);
-    }
+	@Override
+	public SchoolDTO getSchoolById(Long id) {
+		School school = schoolRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
+		return convertToDto(school);
+	}
 
-    @Override
-    public List<SchoolDTO> searchSchoolsByName(String partialName) {
-        List<School> schools = schoolRepository.findByNameContainingIgnoreCase(partialName);
-        return schools.stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
+	@Override
+	public List<SchoolDTO> searchSchoolsByName(String partialName) {
+		List<School> schools = schoolRepository.findByNameContainingIgnoreCase(partialName);
+		return schools.stream().map(this::convertToDto).collect(Collectors.toList());
+	}
 
-    @Override
-    @Transactional
-    public SchoolDTO createSchool(SchoolDTO schoolDTO) {
-        // Check for duplicate school by name before saving
-        if (schoolRepository.findByName(schoolDTO.getName()).isPresent()) {
-            throw new com.bookstore.booksmanagementsystem.exception.DuplicateResourceException(
-                "School", "name", schoolDTO.getName());
-        }
-        School school = modelMapper.map(schoolDTO, School.class);
-        School savedSchool = schoolRepository.save(school);
-        return convertToDto(savedSchool);
-    }
+	@Override
+	@Transactional
+	public SchoolDTO createSchool(SchoolDTO schoolDTO) {
+		// Trim name and address to avoid issues with leading/trailing spaces
+		String trimmedName = schoolDTO.getName() != null ? schoolDTO.getName().trim() : null;
+		String trimmedAddress = schoolDTO.getAddress() != null ? schoolDTO.getAddress().trim() : null;
+		schoolDTO.setName(trimmedName);
+		schoolDTO.setAddress(trimmedAddress);
 
-    @Override
-    @Transactional
-    public SchoolDTO updateSchool(Long id, SchoolDTO schoolDTO) {
-        School existingSchool = schoolRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
+		// Check for duplicate school by name and address before saving
+		if (schoolRepository.findByNameAndAddress(trimmedName, trimmedAddress).isPresent()) {
+			throw new com.bookstore.booksmanagementsystem.exception.DuplicateResourceException("School",
+					"name and address", trimmedName + " and " + trimmedAddress);
+		}
+		School school = modelMapper.map(schoolDTO, School.class);
+		School savedSchool = schoolRepository.save(school);
+		return convertToDto(savedSchool);
+	}
 
-        // Check for duplicate school name excluding current school
-        schoolRepository.findByName(schoolDTO.getName()).ifPresent(school -> {
-            if (!school.getId().equals(id)) {
-                throw new com.bookstore.booksmanagementsystem.exception.DuplicateResourceException(
-                    "School", "name", schoolDTO.getName());
-            }
-        });
+	@Override
+	@Transactional
+	public SchoolDTO updateSchool(Long id, SchoolDTO schoolDTO) {
+		School existingSchool = schoolRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
 
-        existingSchool.setName(schoolDTO.getName());
-        existingSchool.setAddress(schoolDTO.getAddress());
-        existingSchool.setPhoneNumber(schoolDTO.getPhoneNumber());
+		// Check for duplicate school name and address excluding current school
+		schoolRepository.findByNameAndAddress(schoolDTO.getName(), schoolDTO.getAddress()).ifPresent(school -> {
+			if (!school.getId().equals(id)) {
+				throw new com.bookstore.booksmanagementsystem.exception.DuplicateResourceException("School",
+						"name and address", schoolDTO.getName() + " and " + schoolDTO.getAddress());
+			}
+		});
 
-        School updatedSchool = schoolRepository.save(existingSchool);
-        return convertToDto(updatedSchool);
-    }
+		existingSchool.setName(schoolDTO.getName());
+		existingSchool.setAddress(schoolDTO.getAddress());
+		existingSchool.setPhoneNumber(schoolDTO.getPhoneNumber());
 
-    @Override
-    @Transactional
-    public void deleteSchool(Long id) {
-        School school = schoolRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
-        schoolRepository.delete(school);
-    }
+		School updatedSchool = schoolRepository.save(existingSchool);
+		return convertToDto(updatedSchool);
+	}
 
-    private SchoolDTO convertToDto(School school) {
-        SchoolDTO dto = new SchoolDTO();
-        dto.setId(school.getId());
-        dto.setName(school.getName());
-        dto.setAddress(school.getAddress());
-        dto.setPhoneNumber(school.getPhoneNumber());
-        // Do not set classes or classesMessage to exclude them from output
-        return dto;
-    }
+	@Override
+	@Transactional
+	public void deleteSchool(Long id) {
+		School school = schoolRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("School", "id", id));
+		schoolRepository.delete(school);
+	}
+
+	private SchoolDTO convertToDto(School school) {
+		SchoolDTO dto = new SchoolDTO();
+		dto.setId(school.getId());
+		dto.setName(school.getName());
+		dto.setAddress(school.getAddress());
+		dto.setPhoneNumber(school.getPhoneNumber());
+		// Do not set classes or classesMessage to exclude them from output
+		return dto;
+	}
 }

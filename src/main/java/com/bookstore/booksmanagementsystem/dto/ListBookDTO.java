@@ -5,132 +5,117 @@ import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 
 public class ListBookDTO {
-    private Long id;
+	private Long id;
 
-    @NotNull(message = "List ID cannot be null")
-    private Long listId;
+	@NotNull(message = "List ID cannot be null")
+	private Long listId;
 
-    @NotNull(message = "Book ID cannot be null")
-    private Long bookId;
+	@NotNull(message = "Book ID cannot be null")
+	private Long bookId;
 
-    @NotNull(message = "Quantity cannot be null")
-    @Min(value = 1, message = "Quantity must be at least 1")
-    private Integer quantity;
+	private String bookTitle;
+	private String bookAuthor;
+	private Double bookPrice;
+	private String listYear;
+	private String listClassName;
 
-    private String bookTitle;
-    private String bookAuthor;
-    private Double bookPrice;
-    private String listYear;
-    private String listClassName;
+	public ListBookDTO() {
+	}
 
-    public ListBookDTO() {
-    }
+	public ListBookDTO(Long id, Long listId, Long bookId, String bookTitle, String bookAuthor, Double bookPrice,
+			String listYear, String listClassName) {
+		this.id = id;
+		this.listId = listId;
+		this.bookId = bookId;
+		this.bookTitle = bookTitle;
+		this.bookAuthor = bookAuthor;
+		this.bookPrice = bookPrice;
+		this.listYear = listYear;
+		this.listClassName = listClassName;
+	}
 
-    public ListBookDTO(Long id, Long listId, Long bookId, Integer quantity, String bookTitle, String bookAuthor, Double bookPrice, String listYear, String listClassName) {
-        this.id = id;
-        this.listId = listId;
-        this.bookId = bookId;
-        this.quantity = quantity;
-        this.bookTitle = bookTitle;
-        this.bookAuthor = bookAuthor;
-        this.bookPrice = bookPrice;
-        this.listYear = listYear;
-        this.listClassName = listClassName;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getListId() {
+		return listId;
+	}
 
-    public Long getListId() {
-        return listId;
-    }
+	public void setListId(Long listId) {
+		this.listId = listId;
+	}
 
-    public void setListId(Long listId) {
-        this.listId = listId;
-    }
+	public Long getBookId() {
+		return bookId;
+	}
 
-    public Long getBookId() {
-        return bookId;
-    }
+	public void setBookId(Long bookId) {
+		this.bookId = bookId;
+	}
 
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
-    }
+	public String getBookTitle() {
+		return bookTitle;
+	}
 
-    public Integer getQuantity() {
-        return quantity;
-    }
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
+	}
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+	public String getBookAuthor() {
+		return bookAuthor;
+	}
 
-    public String getBookTitle() {
-        return bookTitle;
-    }
+	public void setBookAuthor(String bookAuthor) {
+		this.bookAuthor = bookAuthor;
+	}
 
-    public void setBookTitle(String bookTitle) {
-        this.bookTitle = bookTitle;
-    }
+	public Double getBookPrice() {
+		return bookPrice;
+	}
 
-    public String getBookAuthor() {
-        return bookAuthor;
-    }
+	public void setBookPrice(Double bookPrice) {
+		this.bookPrice = bookPrice;
+	}
 
-    public void setBookAuthor(String bookAuthor) {
-        this.bookAuthor = bookAuthor;
-    }
+	public String getListYear() {
+		return listYear;
+	}
 
-    public Double getBookPrice() {
-        return bookPrice;
-    }
+	public void setListYear(String listYear) {
+		this.listYear = listYear;
+	}
 
-    public void setBookPrice(Double bookPrice) {
-        this.bookPrice = bookPrice;
-    }
+	public String getListClassName() {
+		return listClassName;
+	}
 
-    public String getListYear() {
-        return listYear;
-    }
+	public void setListClassName(String listClassName) {
+		this.listClassName = listClassName;
+	}
 
-    public void setListYear(String listYear) {
-        this.listYear = listYear;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-    public String getListClassName() {
-        return listClassName;
-    }
+		ListBookDTO that = (ListBookDTO) o;
+		return Objects.equals(id, that.id);
+	}
 
-    public void setListClassName(String listClassName) {
-        this.listClassName = listClassName;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        ListBookDTO that = (ListBookDTO) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "ListBookDTO{" +
-               "id=" + id +
-               ", listId=" + listId +
-               ", bookId=" + bookId +
-               ", quantity=" + quantity +
-               '}';
-    }
+	@Override
+	public String toString() {
+		return "ListBookDTO{" + "id=" + id + ", listId=" + listId + ", bookId=" + bookId + '}';
+	}
 }

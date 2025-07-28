@@ -3,98 +3,122 @@ package com.bookstore.booksmanagementsystem.dto;
 import jakarta.validation.constraints.NotNull;
 
 public class CustomerBookOrderItemDTO {
-    private Long id;
+	private Long id;
 
-    @NotNull
-    private Long orderId;
+	@NotNull
+	private Long orderId;
 
-    @NotNull
-    private Long bookId;
+	@NotNull
+	private Long bookId;
 
-    @NotNull
-    private Integer quantity;
+	@NotNull
+	private Integer quantity;
 
-    private Boolean isPrepared;
+	private BookCondition conditionType;
 
-    private BookCondition conditionType;
+	private String bookTitle;
+	private String bookAuthor;
+	private Double bookPrice;
 
-    private String bookTitle;
-    private String bookAuthor;
-    private Double bookPrice;
+	// New fields to support multiple lists
+	@NotNull(message = "Official List ID cannot be null")
+	private Long officialListId;
 
-    public enum BookCondition {
-        NEW, USED
-    }
+	@NotNull(message = "School ID cannot be null")
+	private Long schoolId;
 
-    public Long getId() {
-        return id;
-    }
+	@NotNull(message = "Class ID cannot be null")
+	private Long classId;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public enum BookCondition {
+		NEW, USED
+	}
 
-    public Long getOrderId() {
-        return orderId;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getBookId() {
-        return bookId;
-    }
+	public Long getOrderId() {
+		return orderId;
+	}
 
-    public void setBookId(Long bookId) {
-        this.bookId = bookId;
-    }
+	public void setOrderId(Long orderId) {
+		this.orderId = orderId;
+	}
 
-    public Integer getQuantity() {
-        return quantity;
-    }
+	public Long getBookId() {
+		return bookId;
+	}
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
+	public void setBookId(Long bookId) {
+		this.bookId = bookId;
+	}
 
-    public Boolean getIsPrepared() {
-        return isPrepared;
-    }
+	public Integer getQuantity() {
+		return quantity;
+	}
 
-    public void setIsPrepared(Boolean isPrepared) {
-        this.isPrepared = isPrepared;
-    }
+	public void setQuantity(Integer quantity) {
+		this.quantity = quantity;
+	}
 
-    public BookCondition getConditionType() {
-        return conditionType;
-    }
+	public BookCondition getConditionType() {
+		return conditionType;
+	}
 
-    public void setConditionType(BookCondition conditionType) {
-        this.conditionType = conditionType;
-    }
+	public void setConditionType(BookCondition conditionType) {
+		this.conditionType = conditionType;
+	}
 
-    public String getBookTitle() {
-        return bookTitle;
-    }
+	public String getBookTitle() {
+		return bookTitle;
+	}
 
-    public void setBookTitle(String bookTitle) {
-        this.bookTitle = bookTitle;
-    }
+	public void setBookTitle(String bookTitle) {
+		this.bookTitle = bookTitle;
+	}
 
-    public String getBookAuthor() {
-        return bookAuthor;
-    }
+	public String getBookAuthor() {
+		return bookAuthor;
+	}
 
-    public void setBookAuthor(String bookAuthor) {
-        this.bookAuthor = bookAuthor;
-    }
+	public void setBookAuthor(String bookAuthor) {
+		this.bookAuthor = bookAuthor;
+	}
 
-    public Double getBookPrice() {
-        return bookPrice;
-    }
+	public Double getBookPrice() {
+		return bookPrice;
+	}
 
-    public void setBookPrice(Double bookPrice) {
-        this.bookPrice = bookPrice;
-    }
+	public void setBookPrice(Double bookPrice) {
+		this.bookPrice = bookPrice;
+	}
+
+	public Long getOfficialListId() {
+		return officialListId;
+	}
+
+	public void setOfficialListId(Long officialListId) {
+		this.officialListId = officialListId;
+	}
+
+	public Long getSchoolId() {
+		return schoolId;
+	}
+
+	public void setSchoolId(Long schoolId) {
+		this.schoolId = schoolId;
+	}
+
+	public Long getClassId() {
+		return classId;
+	}
+
+	public void setClassId(Long classId) {
+		this.classId = classId;
+	}
 }

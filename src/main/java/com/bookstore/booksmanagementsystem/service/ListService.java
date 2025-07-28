@@ -25,4 +25,6 @@ public interface ListService {
 	List<ListBookDTO> getBooksForList(Long listId);
 
 	ListDTO getListByClassAndYear(Long classId, Integer year);
+
+	ListBookDTO getBookById(Long listBookId);
 }
