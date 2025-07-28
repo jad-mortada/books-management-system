@@ -21,29 +21,30 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final CustomerService customerService;
-    private final JwtTokenProvider tokenProvider;
+	private final AuthenticationManager authenticationManager;
+	private final CustomerService customerService;
+	private final JwtTokenProvider tokenProvider;
 
-    public AuthController(AuthenticationManager authenticationManager, CustomerService customerService, JwtTokenProvider tokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.customerService = customerService;
-        this.tokenProvider = tokenProvider;
-    }
+	public AuthController(AuthenticationManager authenticationManager, CustomerService customerService,
+			JwtTokenProvider tokenProvider) {
+		this.authenticationManager = authenticationManager;
+		this.customerService = customerService;
+		this.tokenProvider = tokenProvider;
+	}
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponseDTO> authenticateUser(@Valid @RequestBody LoginDTO loginDto){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
+	@PostMapping("/login")
+	public ResponseEntity<AuthResponseDTO> authenticateUser(@Valid @RequestBody LoginDTO loginDto) {
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = tokenProvider.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponseDTO(jwt));
-    }
+		SecurityContextHolder.getContext().setAuthentication(authentication);
+		String jwt = tokenProvider.createToken(authentication);
+		return ResponseEntity.ok(new AuthResponseDTO(jwt));
+	}
 
-    @PostMapping("/register")
-    public ResponseEntity<CustomerDTO> registerCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
-        CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
-        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
-    }
+	@PostMapping("/register")
+	public ResponseEntity<CustomerDTO> registerCustomer(@Valid @RequestBody CustomerDTO customerDTO) {
+		CustomerDTO createdCustomer = customerService.createCustomer(customerDTO);
+		return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+	}
 }

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface CustomerBookOrderItemRepository extends JpaRepository<CustomerBookOrderItem, Long> {
-    Optional<CustomerBookOrderItem> findByCustomerBookOrderIdAndBookId(Long orderId, Long bookId);
-    List<CustomerBookOrderItem> findByCustomerBookOrderId(Long orderId);
+	Optional<CustomerBookOrderItem> findByCustomerBookOrderIdAndBookId(Long orderId, Long bookId);
+
+	List<CustomerBookOrderItem> findByCustomerBookOrderId(Long orderId);
 }

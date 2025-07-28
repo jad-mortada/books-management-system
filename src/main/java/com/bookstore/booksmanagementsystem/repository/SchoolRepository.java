@@ -9,6 +9,9 @@ import java.util.Optional;
 
 @Repository
 public interface SchoolRepository extends JpaRepository<School, Long> {
-    Optional<School> findByName(String name);
-    List<School> findByNameContainingIgnoreCase(String name);
+	Optional<School> findByName(String name);
+
+	List<School> findByNameContainingIgnoreCase(String name);
+
+	Optional<School> findByNameAndAddress(String name, String address);
 }

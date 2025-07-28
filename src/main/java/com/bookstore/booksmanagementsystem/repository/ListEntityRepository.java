@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface ListEntityRepository extends JpaRepository<ListEntity, Long> {
-    Optional<ListEntity> findByClassEntityIdAndYear(Long classId, Integer year);
+	Optional<ListEntity> findByClassEntityIdAndYear(Long classId, Integer year);
 }

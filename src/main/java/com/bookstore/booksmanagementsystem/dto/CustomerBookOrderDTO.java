@@ -1,6 +1,5 @@
 package com.bookstore.booksmanagementsystem.dto;
 
-import com.bookstore.booksmanagementsystem.entity.CustomerBookOrder.OrderStatus;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -8,174 +7,98 @@ import java.util.Objects;
 import java.util.Set;
 
 public class CustomerBookOrderDTO {
-    private Long id;
+	private Long id;
 
-    @NotNull(message = "Customer ID cannot be null")
-    private Long customerId;
-    private String customerFirstName;
-    private String customerLastName;
+	@NotNull(message = "Customer ID cannot be null")
+	private Long customerId;
+	private String customerFirstName;
+	private String customerLastName;
 
-    @NotNull(message = "Official List ID cannot be null")
-    private Long officialListId;
-    private String officialListYear;
-    private String officialListClassName;
-    private String officialListSchoolName;
+	private LocalDateTime orderDate;
 
-    @NotNull(message = "School ID cannot be null")
-    private Long schoolId;
+	private Set<CustomerBookOrderItemDTO> orderItems = new HashSet<>();
 
-    @NotNull(message = "Class ID cannot be null")
-    private Long classId;
+	public CustomerBookOrderDTO() {
+	}
 
-    private LocalDateTime orderDate;
-    private OrderStatus status;
+	public CustomerBookOrderDTO(Long id, Long customerId, String customerFirstName, String customerLastName,
+			LocalDateTime orderDate) {
+		this.id = id;
+		this.customerId = customerId;
+		this.customerFirstName = customerFirstName;
+		this.customerLastName = customerLastName;
+		this.orderDate = orderDate;
 
-    private Set<CustomerBookOrderItemDTO> orderItems = new HashSet<>();
+	}
 
-    public CustomerBookOrderDTO() {
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public CustomerBookOrderDTO(Long id, Long customerId, String customerFirstName, String customerLastName, Long officialListId, String officialListYear, String officialListClassName, String officialListSchoolName, Long schoolId, Long classId, LocalDateTime orderDate, OrderStatus status) {
-        this.id = id;
-        this.customerId = customerId;
-        this.customerFirstName = customerFirstName;
-        this.customerLastName = customerLastName;
-        this.officialListId = officialListId;
-        this.officialListYear = officialListYear;
-        this.officialListClassName = officialListClassName;
-        this.officialListSchoolName = officialListSchoolName;
-        this.schoolId = schoolId;
-        this.classId = classId;
-        this.orderDate = orderDate;
-        this.status = status;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getCustomerId() {
+		return customerId;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setCustomerId(Long customerId) {
+		this.customerId = customerId;
+	}
 
-    public Long getCustomerId() {
-        return customerId;
-    }
+	public String getCustomerFirstName() {
+		return customerFirstName;
+	}
 
-    public void setCustomerId(Long customerId) {
-        this.customerId = customerId;
-    }
+	public void setCustomerFirstName(String customerFirstName) {
+		this.customerFirstName = customerFirstName;
+	}
 
-    public String getCustomerFirstName() {
-        return customerFirstName;
-    }
+	public String getCustomerLastName() {
+		return customerLastName;
+	}
 
-    public void setCustomerFirstName(String customerFirstName) {
-        this.customerFirstName = customerFirstName;
-    }
+	public void setCustomerLastName(String customerLastName) {
+		this.customerLastName = customerLastName;
+	}
 
-    public String getCustomerLastName() {
-        return customerLastName;
-    }
+	public LocalDateTime getOrderDate() {
+		return orderDate;
+	}
 
-    public void setCustomerLastName(String customerLastName) {
-        this.customerLastName = customerLastName;
-    }
+	public void setOrderDate(LocalDateTime orderDate) {
+		this.orderDate = orderDate;
+	}
 
-    public Long getOfficialListId() {
-        return officialListId;
-    }
+	public Set<CustomerBookOrderItemDTO> getOrderItems() {
+		return orderItems;
+	}
 
-    public void setOfficialListId(Long officialListId) {
-        this.officialListId = officialListId;
-    }
+	public void setOrderItems(Set<CustomerBookOrderItemDTO> orderItems) {
+		this.orderItems = orderItems;
+	}
 
-    public String getOfficialListYear() {
-        return officialListYear;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-    public void setOfficialListYear(String officialListYear) {
-        this.officialListYear = officialListYear;
-    }
+		CustomerBookOrderDTO that = (CustomerBookOrderDTO) o;
+		return Objects.equals(id, that.id);
+	}
 
-    public String getOfficialListClassName() {
-        return officialListClassName;
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
-    public void setOfficialListClassName(String officialListClassName) {
-        this.officialListClassName = officialListClassName;
-    }
+	@Override
+	public String toString() {
+		return "CustomerBookOrderDTO{" + "id=" + id + ", customerId=" + customerId + ", orderDate=" + orderDate +
 
-    public String getOfficialListSchoolName() {
-        return officialListSchoolName;
-    }
-
-    public void setOfficialListSchoolName(String officialListSchoolName) {
-        this.officialListSchoolName = officialListSchoolName;
-    }
-
-    public Long getSchoolId() {
-        return schoolId;
-    }
-
-    public void setSchoolId(Long schoolId) {
-        this.schoolId = schoolId;
-    }
-
-    public Long getClassId() {
-        return classId;
-    }
-
-    public void setClassId(Long classId) {
-        this.classId = classId;
-    }
-
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
-
-    public void setOrderDate(LocalDateTime orderDate) {
-        this.orderDate = orderDate;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
-    public Set<CustomerBookOrderItemDTO> getOrderItems() {
-        return orderItems;
-    }
-
-    public void setOrderItems(Set<CustomerBookOrderItemDTO> orderItems) {
-        this.orderItems = orderItems;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        CustomerBookOrderDTO that = (CustomerBookOrderDTO) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "CustomerBookOrderDTO{" +
-               "id=" + id +
-               ", customerId=" + customerId +
-               ", officialListId=" + officialListId +
-               ", orderDate=" + orderDate +
-               ", status=" + status +
-               '}';
-    }
+				'}';
+	}
 }

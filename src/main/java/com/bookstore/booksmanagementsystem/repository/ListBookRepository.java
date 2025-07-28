@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Repository
 public interface ListBookRepository extends JpaRepository<ListBook, Long> {
-    Optional<ListBook> findByListEntityIdAndBookId(Long listId, Long bookId);
-    List<ListBook> findByListEntityId(Long listId);
+	Optional<ListBook> findByListEntityIdAndBookId(Long listId, Long bookId);
+
+	List<ListBook> findByListEntityId(Long listId);
 }
