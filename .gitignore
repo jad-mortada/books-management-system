@@ -1,25 +1,14 @@
-﻿# Build output
-target/
-
-# Maven
+﻿target/
 .mvn/wrapper/maven-wrapper.jar
-
-# IDEs
 .idea/
 *.iml
 .project
 .classpath
 .settings/
 .vscode/
-
-# Logs
 *.log
-
-# OS junk
 .DS_Store
 Thumbs.db
-
-# Env / secrets
 .env
 application-*.properties
 application-*.yml
