@@ -63,19 +63,40 @@ public class SecurityConfig {
 					}
 					response.getWriter().write("{\"error\": \"Access denied: " + message + "\"}");
 				})).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.authorizeHttpRequests(authorize -> authorize.requestMatchers("/api/auth/**").permitAll()
-						.requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
-						.requestMatchers(HttpMethod.GET, "/api/schools").permitAll()
-						.requestMatchers(HttpMethod.GET, "/api/schools/*").permitAll()
-						.requestMatchers(HttpMethod.GET, "/api/classes").permitAll()
-						.requestMatchers(HttpMethod.GET, "/api/classes/*").permitAll()
-						.requestMatchers(HttpMethod.GET, "/api/books").permitAll()
-						.requestMatchers(HttpMethod.POST, "/api/schools").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/api/schools/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.DELETE, "/api/schools/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.PUT, "/api/classes/**").hasRole("ADMIN")
-						.requestMatchers(HttpMethod.DELETE, "/api/classes/**").hasRole("ADMIN").anyRequest()
-						.authenticated());
+				.authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/favicon.ico", "/", "/index.html", "/static/**", "/assets/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/schools").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/schools/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/classes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/classes/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/books").permitAll()
+                        // Allow customers to read lists and list-books
+                        .requestMatchers(HttpMethod.GET, "/api/lists").hasAnyRole("USER","ADMIN","SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/lists/**").hasAnyRole("USER","ADMIN","SUPER_ADMIN")
+                        // Temp orders (customer draft CRUD and submit)
+                        .requestMatchers(HttpMethod.GET, "/api/temp-orders/me").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/temp-orders/items").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/temp-orders/items/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/temp-orders/items/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/temp-orders/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/api/temp-orders/*/submit").hasRole("USER")
+                        // Temp orders admin
+                        .requestMatchers(HttpMethod.GET, "/api/temp-orders").hasAnyRole("ADMIN","SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/temp-orders/*/approve").hasAnyRole("ADMIN","SUPER_ADMIN")
+                        // Admin profile and admin management endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/admins/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/admins").hasRole("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/admins/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/admins/**").hasRole("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/schools").hasAnyRole("ADMIN","SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/schools/**").hasAnyRole("ADMIN","SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/schools/**").hasAnyRole("ADMIN","SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/classes/**").hasAnyRole("ADMIN","SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/classes/**").hasAnyRole("ADMIN","SUPER_ADMIN").anyRequest()
+                        .authenticated());
 
 		http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();

@@ -195,8 +195,7 @@ public class ListServiceImpl implements ListService {
 		}
 		List<ListBook> listBooks = listBookRepository.findByListEntityId(listId);
 		if (listBooks.isEmpty()) {
-			throw new com.bookstore.booksmanagementsystem.exception.NoBooksFoundException(
-					"No books found in this list.");
+			return List.of();
 		}
 		return listBooks.stream().map(this::mapToListBookDTO).collect(Collectors.toList());
 	}

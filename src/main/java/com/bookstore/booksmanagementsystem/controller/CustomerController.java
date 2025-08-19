@@ -9,10 +9,19 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
+
+	@GetMapping("/me")
+	@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+	public ResponseEntity<CustomerDTO> getCurrentUserProfile(Authentication authentication) {
+		String email = authentication.getName();
+		CustomerDTO customer = customerService.getCustomerByEmail(email);
+		return ResponseEntity.ok(customer);
+	}
 
 	private final CustomerService customerService;
 

@@ -40,21 +40,21 @@ public class ClassController {
 	}
 
 	@PostMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
 	public ResponseEntity<ClassDTO> createClass(@Valid @RequestBody ClassDTO classDTO) {
 		ClassDTO createdClass = classService.createClass(classDTO);
 		return new ResponseEntity<>(createdClass, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
 	public ResponseEntity<ClassDTO> updateClass(@PathVariable Long id, @Valid @RequestBody ClassDTO classDTO) {
 		ClassDTO updatedClass = classService.updateClass(id, classDTO);
 		return ResponseEntity.ok(updatedClass);
 	}
 
 	@DeleteMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
 	public ResponseEntity<String> deleteClass(@PathVariable Long id) {
 		classService.deleteClass(id);
 		return ResponseEntity.ok("Class with ID '" + id + "' successfully deleted");

@@ -10,7 +10,8 @@
     {
       "name": "jwt.expiration",
       "type": "java.lang.Long",
-      "sourceType": "com.bookstore.booksmanagementsystem.security.JwtConfig"
+      "sourceType": "com.bookstore.booksmanagementsystem.security.JwtConfig",
+      "defaultValue": 0
     },
     {
       "name": "jwt.secret",

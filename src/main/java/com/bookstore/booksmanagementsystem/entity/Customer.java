@@ -15,7 +15,7 @@ public class Customer {
 	@Column(name = "last_name")
 	private String lastName;
 
-	@Column(name = "email")
+	@Column(name = "email", unique = true, nullable = false)
 	private String email;
 
 	@Column(name = "password")
@@ -82,4 +82,12 @@ public class Customer {
 	public void setRoles(String roles) {
 		this.roles = roles;
 	}
+
+    @PrePersist
+    @PreUpdate
+    private void normalizeEmail() {
+        if (this.email != null) {
+            this.email = this.email.trim().toLowerCase();
+        }
+    }
 }

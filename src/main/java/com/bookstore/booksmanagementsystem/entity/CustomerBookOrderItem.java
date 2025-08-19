@@ -4,7 +4,15 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "customer_book_order_items")
+@Table(
+    name = "customer_book_order_items",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_order_book_condition",
+            columnNames = {"customer_book_order_id", "book_id", "condition_type"}
+        )
+    }
+)
 public class CustomerBookOrderItem {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +44,12 @@ public class CustomerBookOrderItem {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "condition_type")
 	private BookCondition conditionType;
+
+	@Column(name = "unit_price")
+	private Double unitPrice;
+
+	@Column(name = "subtotal")
+	private Double subtotal;
 
 	public enum BookCondition {
 		NEW, USED
@@ -115,6 +129,22 @@ public class CustomerBookOrderItem {
 
 	public void setConditionType(BookCondition conditionType) {
 		this.conditionType = conditionType;
+	}
+
+	public Double getUnitPrice() {
+		return unitPrice;
+	}
+
+	public void setUnitPrice(Double unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+
+	public Double getSubtotal() {
+		return subtotal;
+	}
+
+	public void setSubtotal(Double subtotal) {
+		this.subtotal = subtotal;
 	}
 
 	@Override

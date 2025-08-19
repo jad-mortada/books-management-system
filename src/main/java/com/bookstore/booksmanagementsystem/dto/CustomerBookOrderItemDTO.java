@@ -27,15 +27,21 @@ public class CustomerBookOrderItemDTO {
 	@NotNull(message = "School ID cannot be null")
 	private Long schoolId;
 
+	private String schoolName;
+
 	@NotNull(message = "Class ID cannot be null")
 	private Long classId;
 
+	private String className;
+
+	private Integer year;
+
+	// Committed pricing copied from temp items at approval time
+	private Double unitPrice;
+	private Double subtotal;
+
 	public enum BookCondition {
 		NEW, USED
-	}
-
-	public Long getId() {
-		return id;
 	}
 
 	public void setId(Long id) {
@@ -121,4 +127,44 @@ public class CustomerBookOrderItemDTO {
 	public void setClassId(Long classId) {
 		this.classId = classId;
 	}
+
+	public String getSchoolName() {
+		return schoolName;
+	}
+
+	public void setSchoolName(String schoolName) {
+		this.schoolName = schoolName;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+	public Integer getYear() {
+		return year;
+	}
+
+	public void setYear(Integer year) {
+		this.year = year;
+	}
+
+ 	public Double getUnitPrice() {
+ 		return unitPrice;
+ 	}
+
+ 	public void setUnitPrice(Double unitPrice) {
+ 		this.unitPrice = unitPrice;
+ 	}
+
+ 	public Double getSubtotal() {
+ 		return subtotal;
+ 	}
+
+ 	public void setSubtotal(Double subtotal) {
+ 		this.subtotal = subtotal;
+ 	}
 }

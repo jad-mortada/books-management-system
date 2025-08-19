@@ -32,27 +32,34 @@ public class CustomerBookOrderController {
 	}
 
 	@GetMapping("/{id}")
-	@PreAuthorize("hasRole('ADMIN') or @securityService.isOrderOwner(#id)")
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN') or @securityService.isOrderOwner(#id)")
 	public ResponseEntity<CustomerBookOrderDTO> getOrderById(@PathVariable("id") Long orderId) {
 		CustomerBookOrderDTO orderDTO = customerBookOrderService.getCustomerBookOrderById(orderId);
 		return ResponseEntity.ok(orderDTO);
 	}
 
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
 	public ResponseEntity<List<CustomerBookOrderDTO>> getAllOrders() {
 		List<CustomerBookOrderDTO> orders = customerBookOrderService.getAllCustomerBookOrders();
 		return ResponseEntity.ok(orders);
 	}
 
 	@GetMapping("/by-customer/{customerId}")
-	@PreAuthorize("hasRole('ADMIN') or @securityService.isCustomerOwner(#customerId)")
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN') or @securityService.isCustomerOwner(#customerId)")
 	public ResponseEntity<List<CustomerBookOrderDTO>> getOrdersByCustomerId(@PathVariable Long customerId) {
 		List<CustomerBookOrderDTO> orders = customerBookOrderService.getCustomerBookOrdersByCustomerId(customerId);
 		return ResponseEntity.ok(orders);
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+	@PutMapping("/{id}")
+	public ResponseEntity<CustomerBookOrderDTO> updateOrder(@PathVariable("id") Long orderId, @Valid @RequestBody CustomerBookOrderDTO orderDTO) {
+		CustomerBookOrderDTO updated = customerBookOrderService.updateCustomerBookOrder(orderId, orderDTO);
+		return ResponseEntity.ok(updated);
+	}
+
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteOrder(@PathVariable("id") Long orderId) {
 		CustomerBookOrderDTO order = customerBookOrderService.getCustomerBookOrderById(orderId);

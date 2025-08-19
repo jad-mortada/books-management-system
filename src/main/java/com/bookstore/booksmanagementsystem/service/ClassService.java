@@ -1,19 +1,18 @@
 package com.bookstore.booksmanagementsystem.service;
 
 import com.bookstore.booksmanagementsystem.dto.ClassDTO;
-
 import java.util.List;
 
 public interface ClassService {
-	ClassDTO createClass(ClassDTO classDTO);
+    ClassDTO createClass(ClassDTO classDTO);
 
-	ClassDTO getClassById(Long id);
+    ClassDTO getClassById(Long id);
 
-	List<ClassDTO> getAllClasses();
+    List<ClassDTO> getAllClasses();
 
-	ClassDTO updateClass(Long id, ClassDTO classDTO);
+    ClassDTO updateClass(Long id, ClassDTO classDTO);
 
-	void deleteClass(Long id);
+    void deleteClass(Long id);
 
-	List<ClassDTO> getClassesBySchool(Long schoolId);
+    List<ClassDTO> getClassesBySchool(Long schoolId);
 }

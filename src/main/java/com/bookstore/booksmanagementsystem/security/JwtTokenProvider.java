@@ -2,6 +2,8 @@ package com.bookstore.booksmanagementsystem.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenProvider {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
 
 	private final SecretKey secretKey;
 	private final long validityInMilliseconds;
@@ -56,13 +60,13 @@ public class JwtTokenProvider {
 			Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 			return true;
 		} catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-			System.out.println("Invalid JWT token: " + e.getMessage());
+			log.warn("Invalid JWT token: {}", e.getMessage());
 		} catch (ExpiredJwtException e) {
-			System.out.println("Expired JWT token: " + e.getMessage());
+			log.warn("Expired JWT token: {}", e.getMessage());
 		} catch (UnsupportedJwtException e) {
-			System.out.println("Unsupported JWT token: " + e.getMessage());
+			log.warn("Unsupported JWT token: {}", e.getMessage());
 		} catch (IllegalArgumentException e) {
-			System.out.println("JWT claims string is empty: " + e.getMessage());
+			log.warn("JWT claims string is empty: {}", e.getMessage());
 		}
 		return false;
 	}

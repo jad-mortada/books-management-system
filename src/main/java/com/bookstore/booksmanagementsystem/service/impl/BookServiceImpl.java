@@ -35,14 +35,42 @@ public class BookServiceImpl implements BookService {
 		this.modelMapper = modelMapper;
 	}
 
+	/**
+	 * Normalize an ISBN by removing all non-alphanumeric characters and upper-casing.
+	 * This allows duplicate detection to ignore punctuation, spaces, and case.
+	 */
+	private String normalizeIsbn(String raw) {
+		if (raw == null) return null;
+		String trimmed = raw.trim();
+		if (trimmed.isEmpty()) return "";
+		return trimmed.replaceAll("[^0-9A-Za-z]", "").toUpperCase();
+	}
+
 	@Override
 	public BookDTO createBook(BookDTO bookDTO) {
-		if (bookDTO.getIsbn() == null || bookDTO.getIsbn().isEmpty()) {
+		// Sanitize inputs
+		String isbnInput = bookDTO.getIsbn() == null ? null : bookDTO.getIsbn().trim();
+		if (isbnInput == null || isbnInput.isEmpty()) {
 			throw new IllegalArgumentException("ISBN cannot be empty");
 		}
-		if (bookRepository.findByIsbn(bookDTO.getIsbn()).isPresent()) {
-			throw new DuplicateResourceException("Book", "ISBN", bookDTO.getIsbn());
+		String normalizedNew = normalizeIsbn(isbnInput);
+		if (normalizedNew.isEmpty()) {
+			throw new IllegalArgumentException("ISBN cannot be empty");
 		}
+
+		// Check duplicates ignoring formatting and case
+		for (Book b : bookRepository.findAll()) {
+			String existingNorm = normalizeIsbn(b.getIsbn());
+			if (normalizedNew.equals(existingNorm)) {
+				throw new DuplicateResourceException("Book", "ISBN", bookDTO.getIsbn());
+			}
+		}
+
+		// Persist with trimmed fields to keep data tidy
+		bookDTO.setIsbn(isbnInput);
+		if (bookDTO.getTitle() != null) bookDTO.setTitle(bookDTO.getTitle().trim());
+		if (bookDTO.getAuthor() != null) bookDTO.setAuthor(bookDTO.getAuthor().trim());
+		if (bookDTO.getPublisher() != null) bookDTO.setPublisher(bookDTO.getPublisher().trim());
 
 		Book book = modelMapper.map(bookDTO, Book.class);
 		Book savedBook = bookRepository.save(book);
@@ -63,22 +91,28 @@ public class BookServiceImpl implements BookService {
 
 	@Override
 	public BookDTO updateBook(Long id, BookDTO bookDTO) {
-		if (bookDTO.getIsbn() == null || bookDTO.getIsbn().isEmpty()) {
+		String isbnInput = bookDTO.getIsbn() == null ? null : bookDTO.getIsbn().trim();
+		if (isbnInput == null || isbnInput.isEmpty()) {
 			throw new IllegalArgumentException("ISBN cannot be empty");
 		}
 		Book existingBook = bookRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
 
-		bookRepository.findByIsbn(bookDTO.getIsbn()).ifPresent(b -> {
+		String normalizedNew = normalizeIsbn(isbnInput);
+		for (Book b : bookRepository.findAll()) {
 			if (!b.getId().equals(id)) {
-				throw new DuplicateResourceException("Book", "ISBN", bookDTO.getIsbn());
+				String existingNorm = normalizeIsbn(b.getIsbn());
+				if (normalizedNew.equals(existingNorm)) {
+					throw new DuplicateResourceException("Book", "ISBN", bookDTO.getIsbn());
+				}
 			}
-		});
+		}
 
-		existingBook.setTitle(bookDTO.getTitle());
-		existingBook.setAuthor(bookDTO.getAuthor());
-		existingBook.setIsbn(bookDTO.getIsbn());
-		existingBook.setPublisher(bookDTO.getPublisher());
+		// Trim fields before persisting
+		existingBook.setTitle(bookDTO.getTitle() != null ? bookDTO.getTitle().trim() : null);
+		existingBook.setAuthor(bookDTO.getAuthor() != null ? bookDTO.getAuthor().trim() : null);
+		existingBook.setIsbn(isbnInput);
+		existingBook.setPublisher(bookDTO.getPublisher() != null ? bookDTO.getPublisher().trim() : null);
 		existingBook.setPrice(bookDTO.getPrice());
 
 		Book updatedBook = bookRepository.save(existingBook);

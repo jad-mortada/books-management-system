@@ -4,15 +4,14 @@ import com.bookstore.booksmanagementsystem.dto.CustomerDTO;
 import java.util.List;
 
 public interface CustomerService {
-	CustomerDTO createCustomer(CustomerDTO customerDTO);
+    CustomerDTO getCustomerByEmail(String email);
+    CustomerDTO createCustomer(CustomerDTO customerDTO);
 
-	CustomerDTO getCustomerById(Long id);
+    CustomerDTO getCustomerById(Long id);
 
-	List<CustomerDTO> getAllCustomers();
+    List<CustomerDTO> getAllCustomers();
 
-	CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO);
+    CustomerDTO updateCustomer(Long id, CustomerDTO customerDTO);
 
-	void deleteCustomer(Long id);
-
-	CustomerDTO updateCustomerRole(Long id, String newRole);
+    void deleteCustomer(Long id);
 }

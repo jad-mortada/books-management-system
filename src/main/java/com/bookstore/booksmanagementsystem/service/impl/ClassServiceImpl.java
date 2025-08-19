@@ -18,101 +18,106 @@ import java.util.stream.Collectors;
 @Service
 public class ClassServiceImpl implements ClassService {
 
-	private final ClassEntityRepository classEntityRepository;
-	private final SchoolRepository schoolRepository;
-	private final ModelMapper modelMapper;
+    private final ClassEntityRepository classEntityRepository;
+    private final SchoolRepository schoolRepository;
+    private final ModelMapper modelMapper;
 
-	public ClassServiceImpl(ClassEntityRepository classEntityRepository, SchoolRepository schoolRepository,
-			ModelMapper modelMapper) {
-		this.classEntityRepository = classEntityRepository;
-		this.schoolRepository = schoolRepository;
-		this.modelMapper = modelMapper;
-	}
+    public ClassServiceImpl(ClassEntityRepository classEntityRepository, SchoolRepository schoolRepository,
+                            ModelMapper modelMapper) {
+        this.classEntityRepository = classEntityRepository;
+        this.schoolRepository = schoolRepository;
+        this.modelMapper = modelMapper;
+    }
 
-	@Override
-	@Transactional
-	public ClassDTO createClass(ClassDTO classDTO) {
-		School school = schoolRepository.findById(classDTO.getSchoolId())
-				.orElseThrow(() -> new ResourceNotFoundException("School", "id", classDTO.getSchoolId()));
+    private ClassDTO mapToDTOWithSchool(ClassEntity classEntity) {
+        ClassDTO dto = modelMapper.map(classEntity, ClassDTO.class);
+        School school = classEntity.getSchool();
+        dto.setSchoolId(school.getId());
+        dto.setSchoolName(school.getName());
+        dto.setSchoolAddress(school.getAddress());
+        return dto;
+    }
 
-		// Check for duplicate class (name, school, year combination)
-		classEntityRepository
-				.findByNameAndSchoolIdAndYear(classDTO.getName(), classDTO.getSchoolId(), classDTO.getYear())
-				.ifPresent(c -> {
-					throw new DuplicateResourceException("Class", "name, schoolId, year",
-							classDTO.getName() + ", " + classDTO.getSchoolId() + ", " + classDTO.getYear());
-				});
+    @Override
+    @Transactional
+    public ClassDTO createClass(ClassDTO classDTO) {
+        School school = schoolRepository.findById(classDTO.getSchoolId())
+                .orElseThrow(() -> new ResourceNotFoundException("School", "id", classDTO.getSchoolId()));
 
-		ClassEntity classEntity = modelMapper.map(classDTO, ClassEntity.class);
-		classEntity.setSchool(school); // Set the actual School entity
+        // Check for duplicate class (name, school, year combination)
+        classEntityRepository
+                .findByNameAndSchoolIdAndYear(classDTO.getName(), classDTO.getSchoolId(), classDTO.getYear())
+                .ifPresent(c -> {
+                    throw new DuplicateResourceException("Class", "name, schoolId, year",
+                            classDTO.getName() + ", " + classDTO.getSchoolId() + ", " + classDTO.getYear());
+                });
 
-		ClassEntity savedClass = classEntityRepository.save(classEntity);
-		return modelMapper.map(savedClass, ClassDTO.class);
-	}
+        ClassEntity classEntity = modelMapper.map(classDTO, ClassEntity.class);
+        classEntity.setSchool(school); // Set the actual School entity
 
-	@Override
-	public ClassDTO getClassById(Long id) {
-		ClassEntity classEntity = classEntityRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Class", "id", id));
-		return modelMapper.map(classEntity, ClassDTO.class);
-	}
+        ClassEntity savedClass = classEntityRepository.save(classEntity);
+        return mapToDTOWithSchool(savedClass);
+    }
 
-	@Override
-	public List<ClassDTO> getAllClasses() {
-		List<ClassEntity> classes = classEntityRepository.findAll();
-		return classes.stream().map(classEntity -> {
-			ClassDTO dto = modelMapper.map(classEntity, ClassDTO.class);
-			dto.setSchoolId(classEntity.getSchool().getId());
-			return dto;
-		}).collect(Collectors.toList());
-	}
+    @Override
+    public ClassDTO getClassById(Long id) {
+        ClassEntity classEntity = classEntityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Class", "id", id));
+        return mapToDTOWithSchool(classEntity);
+    }
 
-	@Override
-	@Transactional
-	public ClassDTO updateClass(Long id, ClassDTO classDTO) {
-		ClassEntity existingClass = classEntityRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Class", "id", id));
+    @Override
+    public List<ClassDTO> getAllClasses() {
+        List<ClassEntity> classes = classEntityRepository.findAll();
+        return classes.stream()
+                .map(this::mapToDTOWithSchool)
+                .collect(Collectors.toList());
+    }
 
-		School school = schoolRepository.findById(classDTO.getSchoolId())
-				.orElseThrow(() -> new ResourceNotFoundException("School", "id", classDTO.getSchoolId()));
+    @Override
+    @Transactional
+    public ClassDTO updateClass(Long id, ClassDTO classDTO) {
+        ClassEntity existingClass = classEntityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Class", "id", id));
 
-		// Check for duplicate class (name, school, year combination) excluding itself
-		classEntityRepository
-				.findByNameAndSchoolIdAndYear(classDTO.getName(), classDTO.getSchoolId(), classDTO.getYear())
-				.ifPresent(c -> {
-					if (!c.getId().equals(id)) {
-						throw new DuplicateResourceException("Class", "name, schoolId, year",
-								classDTO.getName() + ", " + classDTO.getSchoolId() + ", " + classDTO.getYear());
-					}
-				});
+        School school = schoolRepository.findById(classDTO.getSchoolId())
+                .orElseThrow(() -> new ResourceNotFoundException("School", "id", classDTO.getSchoolId()));
 
-		existingClass.setName(classDTO.getName());
-		existingClass.setYear(classDTO.getYear());
-		existingClass.setSchool(school); // Update the associated school if changed
+        // Check for duplicate class (name, school, year combination) excluding itself
+        classEntityRepository
+                .findByNameAndSchoolIdAndYear(classDTO.getName(), classDTO.getSchoolId(), classDTO.getYear())
+                .ifPresent(c -> {
+                    if (!c.getId().equals(id)) {
+                        throw new DuplicateResourceException("Class", "name, schoolId, year",
+                                classDTO.getName() + ", " + classDTO.getSchoolId() + ", " + classDTO.getYear());
+                    }
+                });
 
-		ClassEntity updatedClass = classEntityRepository.save(existingClass);
-		return modelMapper.map(updatedClass, ClassDTO.class);
-	}
+        existingClass.setName(classDTO.getName());
+        existingClass.setYear(classDTO.getYear());
+        existingClass.setSchool(school); // Update the associated school if changed
 
-	@Override
-	@Transactional
-	public void deleteClass(Long id) {
-		ClassEntity classEntity = classEntityRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("Class", "id", id));
-		classEntityRepository.delete(classEntity);
-	}
+        ClassEntity updatedClass = classEntityRepository.save(existingClass);
+        return mapToDTOWithSchool(updatedClass);
+    }
 
-	@Override
-	public List<ClassDTO> getClassesBySchool(Long schoolId) {
-		// First, check if the school exists
-		if (!schoolRepository.existsById(schoolId)) {
-			throw new ResourceNotFoundException("School", "id", schoolId);
-		}
-		List<ClassEntity> classes = classEntityRepository.findBySchoolId(schoolId);
-		return classes.stream().map(classEntity -> {
-			ClassDTO dto = modelMapper.map(classEntity, ClassDTO.class);
-			dto.setSchoolId(classEntity.getSchool().getId());
-			return dto;
-		}).collect(Collectors.toList());
-	}
+    @Override
+    @Transactional
+    public void deleteClass(Long id) {
+        ClassEntity classEntity = classEntityRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Class", "id", id));
+        classEntityRepository.delete(classEntity);
+    }
+
+    @Override
+    public List<ClassDTO> getClassesBySchool(Long schoolId) {
+        // First, check if the school exists
+        if (!schoolRepository.existsById(schoolId)) {
+            throw new ResourceNotFoundException("School", "id", schoolId);
+        }
+        List<ClassEntity> classes = classEntityRepository.findBySchoolId(schoolId);
+        return classes.stream()
+                .map(this::mapToDTOWithSchool)
+                .collect(Collectors.toList());
+    }
 }

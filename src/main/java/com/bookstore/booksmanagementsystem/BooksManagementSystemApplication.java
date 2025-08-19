@@ -1,7 +1,9 @@
 package com.bookstore.booksmanagementsystem;
 
-import com.bookstore.booksmanagementsystem.entity.Customer;
-import com.bookstore.booksmanagementsystem.repository.CustomerRepository;
+import com.bookstore.booksmanagementsystem.entity.Admin;
+import com.bookstore.booksmanagementsystem.repository.AdminRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class BooksManagementSystemApplication {
+
+    private static final Logger log = LoggerFactory.getLogger(BooksManagementSystemApplication.class);
 
 	public static void main(String[] args) {
 		SpringApplication.run(BooksManagementSystemApplication.class, args);
@@ -22,21 +26,21 @@ public class BooksManagementSystemApplication {
 	}
 
 	@Bean
-	public CommandLineRunner createDefaultAdmin(CustomerRepository customerRepository,
+	public CommandLineRunner createDefaultSuperAdmin(AdminRepository adminRepository,
 			PasswordEncoder passwordEncoder) {
 		return args -> {
-			if (customerRepository.findByEmail("superadmin@bookstore.com").isEmpty()) {
-				Customer admin = new Customer();
-				admin.setFirstName("Super");
-				admin.setLastName("Admin");
-				admin.setEmail("superadmin@bookstore.com");
-				admin.setPassword(passwordEncoder.encode("secureAdminPass123!"));
-				admin.setPhoneNumber("111-222-3333");
-				admin.setRoles("ROLE_ADMIN");
-				customerRepository.save(admin);
-				System.out.println("Default admin user created: superadmin@bookstore.com");
+			if (adminRepository.findByEmail("superadmin@bookstore.com").isEmpty()) {
+				Admin superAdmin = new Admin();
+				superAdmin.setFirstName("Super");
+				superAdmin.setLastName("Admin");
+				superAdmin.setEmail("superadmin@bookstore.com");
+				superAdmin.setPassword(passwordEncoder.encode("secureAdminPass123!"));
+				superAdmin.setPhoneNumber("111-222-3333");
+				superAdmin.setRoles("ROLE_SUPER_ADMIN");
+				adminRepository.save(superAdmin);
+				log.info("Default super admin created in admins table: superadmin@bookstore.com");
 			} else {
-				System.out.println("Default admin user already exists.");
+				log.info("Default super admin already exists in admins table.");
 			}
 		};
 	}

@@ -147,10 +147,12 @@ public class CustomerBookOrderServiceImpl implements CustomerBookOrderService {
                         .orElseThrow(() -> new ResourceNotFoundException("Class", "id", classId));
                 item.setClassEntity(classEntity);
             }
-            double price = book.getPrice();
-            if (item.getConditionType() == CustomerBookOrderItem.BookCondition.USED) {
-                price = price * 0.7;
-            }
+            // Set committed pricing for newly created items (non-temp flow)
+            double base = book.getPrice() != null ? book.getPrice() : 0.0;
+            double unit = (item.getConditionType() == CustomerBookOrderItem.BookCondition.USED) ? (base * 0.5) : base;
+            int qty = item.getQuantity() != null ? item.getQuantity() : 0;
+            item.setUnitPrice(unit);
+            item.setSubtotal(unit * qty);
             return item;
         }).collect(Collectors.toSet());
         customerBookOrderItemRepository.saveAll(orderItems);
@@ -253,6 +255,12 @@ public class CustomerBookOrderServiceImpl implements CustomerBookOrderService {
                         .orElseThrow(() -> new ResourceNotFoundException("Class", "id", classId));
                 item.setClassEntity(itemClassEntity);
             }
+            // Set committed pricing for newly created items (non-temp flow)
+            double base = book.getPrice() != null ? book.getPrice() : 0.0;
+            double unit = (item.getConditionType() == CustomerBookOrderItem.BookCondition.USED) ? (base * 0.5) : base;
+            int qty = item.getQuantity() != null ? item.getQuantity() : 0;
+            item.setUnitPrice(unit);
+            item.setSubtotal(unit * qty);
             return item;
         }).collect(Collectors.toSet());
 
@@ -326,11 +334,18 @@ public class CustomerBookOrderServiceImpl implements CustomerBookOrderService {
         dto.setBookId(item.getBook().getId());
         dto.setBookTitle(item.getBook().getTitle());
         dto.setBookAuthor(item.getBook().getAuthor());
-        dto.setBookPrice(item.getBook().getPrice() * item.getQuantity());
+        // bookPrice should represent the base per-unit price (undiscounted)
+        dto.setBookPrice(item.getBook().getPrice());
+        // expose committed pricing from entity (set during approval)
+        dto.setUnitPrice(item.getUnitPrice());
+        dto.setSubtotal(item.getSubtotal());
 
         dto.setOfficialListId(item.getOfficialList() != null ? item.getOfficialList().getId() : null);
         dto.setSchoolId(item.getSchool() != null ? item.getSchool().getId() : null);
+        dto.setSchoolName(item.getSchool() != null ? item.getSchool().getName() : null);
         dto.setClassId(item.getClassEntity() != null ? item.getClassEntity().getId() : null);
+        dto.setClassName(item.getClassEntity() != null ? item.getClassEntity().getName() : null);
+        dto.setYear(item.getClassEntity() != null ? item.getClassEntity().getYear() : null);
         return dto;
     }
 }
