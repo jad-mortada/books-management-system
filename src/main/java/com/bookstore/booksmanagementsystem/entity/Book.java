@@ -28,6 +28,9 @@ public class Book {
 	@Column(name = "price", nullable = false)
 	private Double price;
 
+	@Column(name = "image_url")
+	private String imageUrl;
+
 	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ListBook> officialListAssociations = new HashSet<>();
 
@@ -93,6 +96,14 @@ public class Book {
 		this.price = price;
 	}
 
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
+	}
+
 	public Set<ListBook> getOfficialListAssociations() {
 		return officialListAssociations;
 	}
@@ -128,6 +139,6 @@ public class Book {
 	@Override
 	public String toString() {
 		return "Book{" + "id=" + id + ", title='" + title + '\'' + ", author='" + author + '\'' + ", isbn='" + isbn
-				+ '\'' + ", price=" + price + '}';
+				+ '\'' + ", price=" + price + ", imageUrl='" + imageUrl + '\'' + '}';
 	}
 }

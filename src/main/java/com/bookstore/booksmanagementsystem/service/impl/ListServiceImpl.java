@@ -226,6 +226,7 @@ public class ListServiceImpl implements ListService {
 		dto.setBookTitle(listBook.getBook().getTitle());
 		dto.setBookAuthor(listBook.getBook().getAuthor());
 		dto.setBookPrice(listBook.getBook().getPrice());
+		dto.setImageUrl(listBook.getBook().getImageUrl());
 		dto.setListYear(String.valueOf(listBook.getListEntity().getYear()));
 		dto.setListClassName(listBook.getListEntity().getClassEntity().getName());
 		return dto;

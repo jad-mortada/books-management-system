@@ -8,6 +8,7 @@ public class ProfileDTO {
     private String phoneNumber;
     private String roles;
     private String userType; // ADMIN | SUPER_ADMIN | USER
+    private String avatarUrl;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -29,4 +30,7 @@ public class ProfileDTO {
 
     public String getUserType() { return userType; }
     public void setUserType(String userType) { this.userType = userType; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 }

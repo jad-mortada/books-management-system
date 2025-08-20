@@ -65,6 +65,7 @@ public class SecurityConfig {
 				})).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/favicon.ico", "/", "/index.html", "/static/**", "/assets/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/uploads/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/customers").permitAll()

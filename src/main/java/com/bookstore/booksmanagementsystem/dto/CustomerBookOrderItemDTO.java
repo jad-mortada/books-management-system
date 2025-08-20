@@ -19,6 +19,7 @@ public class CustomerBookOrderItemDTO {
 	private String bookTitle;
 	private String bookAuthor;
 	private Double bookPrice;
+	private String imageUrl;
 
 	// New fields to support multiple lists
 	@NotNull(message = "Official List ID cannot be null")
@@ -102,6 +103,14 @@ public class CustomerBookOrderItemDTO {
 
 	public void setBookPrice(Double bookPrice) {
 		this.bookPrice = bookPrice;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public Long getOfficialListId() {

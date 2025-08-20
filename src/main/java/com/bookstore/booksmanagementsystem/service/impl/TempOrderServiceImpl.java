@@ -107,6 +107,7 @@ public class TempOrderServiceImpl implements TempOrderService {
         if (item.getBook() != null) {
             dto.setBookTitle(item.getBook().getTitle());
             dto.setBookAuthor(item.getBook().getAuthor());
+            dto.setImageUrl(item.getBook().getImageUrl());
         }
         dto.setOfficialListId(item.getOfficialList() != null ? item.getOfficialList().getId() : null);
         dto.setSchoolId(item.getSchool() != null ? item.getSchool().getId() : null);
@@ -419,6 +420,7 @@ public class TempOrderServiceImpl implements TempOrderService {
                 if (oi.getBook().getPrice() != null) {
                     dto.setBookPrice(oi.getBook().getPrice());
                 }
+                dto.setImageUrl(oi.getBook().getImageUrl());
             }
             dto.setQuantity(oi.getQuantity());
             dto.setUnitPrice(oi.getUnitPrice());

@@ -5,6 +5,7 @@ public class TempOrderItemDTO {
     private Long bookId;
     private String bookTitle;
     private String bookAuthor;
+    private String imageUrl;
     private Long officialListId;
     private Long schoolId;
     private Long classId;
@@ -22,6 +23,8 @@ public class TempOrderItemDTO {
     public void setBookTitle(String bookTitle) { this.bookTitle = bookTitle; }
     public String getBookAuthor() { return bookAuthor; }
     public void setBookAuthor(String bookAuthor) { this.bookAuthor = bookAuthor; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public Long getOfficialListId() { return officialListId; }
     public void setOfficialListId(Long officialListId) { this.officialListId = officialListId; }
     public Long getSchoolId() { return schoolId; }

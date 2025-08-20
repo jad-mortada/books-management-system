@@ -27,6 +27,9 @@ public class Customer {
 	@Column(name = "roles")
 	private String roles;
 
+	@Column(name = "avatar_url")
+	private String avatarUrl;
+
 	public Long getId() {
 		return id;
 	}
@@ -82,6 +85,9 @@ public class Customer {
 	public void setRoles(String roles) {
 		this.roles = roles;
 	}
+
+	public String getAvatarUrl() { return avatarUrl; }
+	public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 
     @PrePersist
     @PreUpdate

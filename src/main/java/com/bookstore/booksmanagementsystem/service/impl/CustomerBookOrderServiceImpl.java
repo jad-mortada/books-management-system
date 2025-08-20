@@ -336,6 +336,7 @@ public class CustomerBookOrderServiceImpl implements CustomerBookOrderService {
         dto.setBookAuthor(item.getBook().getAuthor());
         // bookPrice should represent the base per-unit price (undiscounted)
         dto.setBookPrice(item.getBook().getPrice());
+        dto.setImageUrl(item.getBook().getImageUrl());
         // expose committed pricing from entity (set during approval)
         dto.setUnitPrice(item.getUnitPrice());
         dto.setSubtotal(item.getSubtotal());

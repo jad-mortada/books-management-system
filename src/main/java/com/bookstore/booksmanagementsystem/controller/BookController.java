@@ -7,8 +7,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.util.List;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @RestController
 @RequestMapping("/api/books")
@@ -49,6 +56,28 @@ public class BookController {
 	public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @Valid @RequestBody BookDTO bookDTO) {
 		BookDTO updatedBook = bookService.updateBook(id, bookDTO);
 		return ResponseEntity.ok(updatedBook);
+	}
+
+	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
+	@PostMapping(path = "/{id}/image")
+	public ResponseEntity<BookDTO> uploadBookImage(@PathVariable Long id, @RequestParam("file") MultipartFile file)
+			throws IOException {
+		if (file == null || file.isEmpty()) {
+			return ResponseEntity.badRequest().build();
+		}
+		Path uploadRoot = Paths.get("uploads", "books");
+		Files.createDirectories(uploadRoot);
+		String original = file.getOriginalFilename() == null ? "image" : file.getOriginalFilename();
+		String ext = original.contains(".") ? original.substring(original.lastIndexOf('.')) : "";
+		String storedName = "book_" + id + "_" + System.currentTimeMillis() + ext;
+		Path destination = uploadRoot.resolve(storedName);
+		Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+		String publicPath = "/uploads/books/" + storedName;
+		String publicUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+				.path(publicPath)
+				.toUriString();
+		BookDTO dto = bookService.updateBookImage(id, publicUrl);
+		return ResponseEntity.ok(dto);
 	}
 
 	@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")

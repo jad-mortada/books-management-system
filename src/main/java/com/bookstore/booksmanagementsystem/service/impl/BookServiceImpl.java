@@ -142,4 +142,13 @@ public class BookServiceImpl implements BookService {
 		}
 		return books.stream().map(book -> modelMapper.map(book, BookDTO.class)).collect(Collectors.toList());
 	}
+
+	@Override
+	public BookDTO updateBookImage(Long id, String imageUrl) {
+		Book existingBook = bookRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+		existingBook.setImageUrl(imageUrl);
+		Book saved = bookRepository.save(existingBook);
+		return modelMapper.map(saved, BookDTO.class);
+	}
 }

@@ -28,6 +28,9 @@ public class Admin {
     @Column(name = "roles", nullable = false)
     private String roles;
 
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -48,6 +51,9 @@ public class Admin {
 
     public String getRoles() { return roles; }
     public void setRoles(String roles) { this.roles = roles; }
+
+    public String getAvatarUrl() { return avatarUrl; }
+    public void setAvatarUrl(String avatarUrl) { this.avatarUrl = avatarUrl; }
 
     @PrePersist
     @PreUpdate

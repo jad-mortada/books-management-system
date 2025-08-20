@@ -16,6 +16,7 @@ public class ListBookDTO {
 	private String bookTitle;
 	private String bookAuthor;
 	private Double bookPrice;
+	private String imageUrl;
 	private String listYear;
 	private String listClassName;
 
@@ -80,6 +81,14 @@ public class ListBookDTO {
 
 	public void setBookPrice(Double bookPrice) {
 		this.bookPrice = bookPrice;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public String getListYear() {

@@ -16,4 +16,6 @@ public interface BookService {
 	void deleteBook(Long id);
 
 	List<BookDTO> searchBooks(String query);
+
+	BookDTO updateBookImage(Long id, String imageUrl);
 }
